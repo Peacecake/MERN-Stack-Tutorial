@@ -27,7 +27,7 @@ router.get("/test", (request, response) => {
 router.post("/register", (request, response) => {
   const { errors, isValid } = validateRegisterInput(request.body);
   if (!isValid) {
-    return response.status(400).json({ errors });
+    return response.status(400).json(errors);
   }
 
   User.findOne({ email: request.body.email })
@@ -100,34 +100,23 @@ router.post("/login", (request, response) => {
             };
 
             // Sign Token
-            jwt.sign(
-              payload,
-              keys.secretOrKey,
-              { expiresIn: 3600 },
-              (err, token) => {
-                if (err) {
-                  return response
-                    .status(400)
-                    .json({ password: "Error during signing token" });
-                }
-                response.json({ success: true, token: "Bearer " + token });
+            jwt.sign(payload, keys.secretOrKey, { expiresIn: 3600 }, (err, token) => {
+              if (err) {
+                return response.status(400).json({ password: "Error during signing token" });
               }
-            );
+              response.json({ success: true, token: "Bearer " + token });
+            });
           } else {
             errors.password = "Password incorrect";
             return response.status(400).json(errors);
           }
         })
         .catch(err => {
-          return response
-            .status(400)
-            .json({ password: "Error while comparing ", error: err });
+          return response.status(400).json({ password: "Error while comparing ", error: err });
         });
     })
     .catch(err => {
-      return response
-        .status(404)
-        .json({ email: "Error while retrieving user data", error: err });
+      return response.status(404).json({ email: "Error while retrieving user data", error: err });
     });
 });
 
@@ -136,16 +125,12 @@ router.post("/login", (request, response) => {
  * @description returns current user
  * @access      Private
  */
-router.get(
-  "/current",
-  passport.authenticate("jwt", { session: false }),
-  (request, response) => {
-    response.json({
-      id: request.user.id,
-      name: request.user.name,
-      email: request.user.email
-    });
-  }
-);
+router.get("/current", passport.authenticate("jwt", { session: false }), (request, response) => {
+  response.json({
+    id: request.user.id,
+    name: request.user.name,
+    email: request.user.email
+  });
+});
 
 module.exports = router;
