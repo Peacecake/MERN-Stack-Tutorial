@@ -88,4 +88,122 @@ router.delete("/:id", passport.authenticate("jwt", { session: false }), (request
     .catch(err => response.status(404).json({ noProfile: "User has no profile" }));
 });
 
+/**
+ * @route       POST api/posts/like/:id
+ * @description Like a Post
+ * @access      Private
+ */
+router.post("/like/:id", passport.authenticate("jwt", { session: false }), (request, response) => {
+  Profile.findOne({ user: request.user.id })
+    .then(profile => {
+      Post.findById(request.params.id)
+        .then(post => {
+          if (!post) {
+            return response.status(404).json({ noPost: "Post not found" });
+          }
+
+          if (post.likes.filter(like => like.user.toString() === request.user.id).length > 0) {
+            return response.status(400).json({ alreadyLiked: "User already liked this post" });
+          }
+
+          // Add user id to likes array
+          post.likes.unshift({ user: request.user.id });
+          post
+            .save()
+            .then(post => response.json(post))
+            .catch(err => response.status(400).json(err));
+        })
+        .catch(err => response.status(404).json({ noPost: "Post not found" }));
+    })
+    .catch(err => response.status(404).json({ noProfile: "User has no profile" }));
+});
+
+/**
+ * @route       POST api/posts/unlike/:id
+ * @description unlike a Post
+ * @access      Private
+ */
+router.post("/unlike/:id", passport.authenticate("jwt", { session: false }), (request, response) => {
+  Profile.findOne({ user: request.user.id })
+    .then(profile => {
+      Post.findById(request.params.id)
+        .then(post => {
+          if (!post) {
+            return response.status(404).json({ noPost: "Post not found" });
+          }
+
+          if (post.likes.filter(like => like.user.toString() === request.user.id).length === 0) {
+            return response.status(400).json({ notLiked: "You have not yet liked this post" });
+          }
+
+          // Get remove index
+          const removeIndex = post.likes.map(item => item.user.toString()).indexOf(request.user.id);
+          // Splice out of array
+          post.likes.splice(removeIndex, 1);
+          post
+            .save()
+            .then(post => response.json(post))
+            .catch(err => response.status(400).json(err));
+        })
+        .catch(err => response.status(404).json({ noPost: "Post not found" }));
+    })
+    .catch(err => response.status(404).json({ noProfile: "User has no profile" }));
+});
+
+/**
+ * @route       POST api/posts/comment/:id
+ * @description Add comment to post
+ * @access      Private
+ */
+router.post("/comment/:id", passport.authenticate("jwt", { session: false }), (request, response) => {
+  const { errors, isValid } = validatePostInput(request.body);
+  if (!isValid) {
+    return response.status(400).json(errors);
+  }
+
+  Post.findById(request.params.id)
+    .then(post => {
+      const newComment = {
+        text: request.body.text,
+        name: request.body.name,
+        avatar: request.body.avatar,
+        user: request.user.id
+      };
+
+      post.comments.unshift(newComment);
+      post
+        .save()
+        .then(post => response.json(post))
+        .catch(err => response.status(400).json(err));
+    })
+    .catch(err => {
+      response.status(404).json({ postNotFound: "Post not found" });
+    });
+});
+
+/**
+ * @route       DELETE api/posts/comment/:id/:comment_id
+ * @description Remove a comment from post
+ * @access      Private
+ */
+router.delete("/comment/:id/:comment_id", passport.authenticate("jwt", { session: false }), (request, response) => {
+  Post.findById(request.params.id)
+    .then(post => {
+      // Check if comment exists
+      if (post.comments.filter(comment => comment._id.toString() === request.params.comment_id).length === 0) {
+        return response.status(404).json({ commentNotFound: "Comment not found" });
+      }
+
+      const removeIndex = post.comments.map(item => item._id.toString()).indexOf(request.params.comment_id);
+      post.comments.splice(removeIndex, 1);
+      post
+        .save()
+        .then(post => response.json(post))
+        .catch(err => response.status(400).json(err));
+    })
+    .catch(err => {
+      response.status(404).json({ postNotFound: "Post not found" });
+    });
+});
+
 module.exports = router;
