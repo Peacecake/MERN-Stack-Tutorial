@@ -73,7 +73,7 @@ router.post("/register", (request, response) => {
 router.post("/login", (request, response) => {
   const { errors, isValid } = validateLoginInput(request.body);
   if (!isValid) {
-    return response.status(400).json({ errors });
+    return response.status(400).json( errors );
   }
 
   const email = request.body.email;
