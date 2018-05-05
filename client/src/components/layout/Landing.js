@@ -9,7 +9,7 @@ class Landing extends Component {
       this.props.history.push("/dashboard");
     }
   }
-  
+
   render() {
     return (
       <div className="landing">
