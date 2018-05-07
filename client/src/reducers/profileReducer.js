@@ -7,7 +7,7 @@ const initialState = {
 };
 
 export default function(state = initialState, action) {
-  switch (action) {
+  switch (action.type) {
     case GET_PROFILE:
       return {
         ...state,
@@ -23,7 +23,7 @@ export default function(state = initialState, action) {
       return {
         ...state,
         profile: null
-      }
+      };
     default:
       return state;
   }
