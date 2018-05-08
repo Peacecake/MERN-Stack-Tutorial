@@ -17,7 +17,7 @@ import Register from "./components/auth/Register";
 import Login from "./components/auth/Login";
 import Dashboard from "./components/Dashboard/Dashboard";
 import CreateProfile from "./components/create-profile/CreateProfile";
-
+import EditProfile from "./components/edit-profile/EditProfile";
 
 import "./App.css";
 
@@ -37,7 +37,7 @@ if (localStorage.jwtToken) {
     // Clear current profile
     store.dispatch(clearProfile());
     // Redirect to login
-    window.location.href="/login";
+    window.location.href = "/login";
   }
 }
 
@@ -57,6 +57,9 @@ class App extends Component {
               </Switch>
               <Switch>
                 <PrivateRoute exact path="/create-profile" component={CreateProfile} />
+              </Switch>
+              <Switch>
+                <PrivateRoute exact path="/edit-profile" component={EditProfile} />
               </Switch>
             </div>
             <Footer />
