@@ -103,3 +103,37 @@ export const addEducation = (eduData, history) => dispatch => {
       })
     );
 };
+
+export const deleteExperience = expId => dispatch => {
+  axios
+    .delete(`/api/profiles/experience/${expId}`)
+    .then(res =>
+      dispatch({
+        type: GET_PROFILE,
+        payload: res.data
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      })
+    );
+};
+
+export const deleteEducation = eduId => dispatch => {
+  axios
+    .delete(`/api/profiles/education/${eduId}`)
+    .then(res =>
+      dispatch({
+        type: GET_PROFILE,
+        payload: res.data
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      })
+    );
+};
