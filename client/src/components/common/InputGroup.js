@@ -1,22 +1,13 @@
 import React from "react";
 import classnames from "classnames";
 import PropTypes from "prop-types";
-import TextFieldGroup from "./TextFieldGroup";
 
-const InputGroup = ({
-                              name,
-                              placeholder,
-                              value,
-                              error,
-                              onChange,
-                              icon,
-                              type
-                            }) => {
+const InputGroup = ({ name, placeholder, value, error, onChange, icon, type }) => {
   return (
     <div className="input-group mb-3">
       <div className="input-group-prepend">
         <span className="input-group-text">
-          <i className={icon}></i>
+          <i className={icon} />
         </span>
       </div>
       <input
@@ -31,7 +22,7 @@ const InputGroup = ({
       />
       {error && <div className="invalid-feedback">{error}</div>}
     </div>
-  )
+  );
 };
 
 InputGroup.propTypes = {

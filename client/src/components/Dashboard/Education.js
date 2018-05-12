@@ -7,7 +7,6 @@ import { deleteEducation } from "../../actions/profileActions";
 
 class Education extends Component {
   onDeleteClick(eduId) {
-    console.log(eduId);
     this.props.deleteEducation(eduId);
   }
 
