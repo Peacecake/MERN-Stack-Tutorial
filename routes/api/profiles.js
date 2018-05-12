@@ -73,7 +73,7 @@ router.get("/handle/:handle", (request, response) => {
     .then(profile => {
       if (!profile) {
         errors.noProfile = "There is no profile for this user";
-        response.status(404).json(errors);
+        return response.status(404).json(errors);
       }
       response.json(profile);
     })
@@ -92,7 +92,7 @@ router.get("/user/:user_id", (request, response) => {
     .then(profile => {
       if (!profile) {
         errors.noProfile = "There is no profile for this user";
-        response.status(404).json(errors);
+        return response.status(404).json(errors);
       }
       response.json(profile);
     })
